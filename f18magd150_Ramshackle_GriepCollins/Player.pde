@@ -1,52 +1,67 @@
 class Player
 {
   PVector loc;
-  int x = 20, y = 700;
-  boolean grounded;
   boolean ducking;
+  float ground, gravity, velocity, up; 
   
   Player()
   {
-    loc = new PVector(x, y);
-    grounded = true;
+    loc = new PVector(20, 600);
     ducking = false;
+    
+    ground = loc.y;
+    gravity = .5;
+    velocity = 0;
   }
   
-  void manager()
+  void updatePlayer()
   {
+    if(loc.y < ground) //if off ground
+    {
+      velocity += gravity;
+    }
+    else velocity = 0;
+    
+    if(loc.y >= ground && up != 0) //if at ground level and jump key activated
+    {
+      velocity = -10;
+    }
+    
+    loc.y += velocity;
+    
     render();
   }
   
-  
   void render()
   {
-    fill(200);
-    rect(20, 700, 20, 20);
-  }
-  
-  void jump()
-  {
-    if(grounded)
+    if(loc.y == ground)
     {
-      //jump
-      grounded = false;
-      
+      if(ducking) image(f18magd150_Ramshackle_GriepCollins.duck, 20, loc.y, 100, 100);
+      else image(f18magd150_Ramshackle_GriepCollins.walk, 20, loc.y, 100, 100);
     }
+    else image(f18magd150_Ramshackle_GriepCollins.jump, 20, loc.y, 100, 100);
+     
   }
   
-  void crouch()
+  void keyManager(boolean pressDetect)
   {
-    if(grounded)
+    if(pressDetect) //PRESSED
     {
-      //crouch
+      if(key == 'w')
+        up = -1;
+      else if(key == 's' && loc.y == ground)
+        ducking = true;
     }
-  }
-  
-  void keyManager()
-  {
-    if(key == 'w')
-      jump();
-    else if(key == 's')
-      crouch();
+    else //RELEASED
+    {
+      if(key == 'w')
+      {
+        up = 0;
+      }
+      else if(key == 's')
+      {
+        ducking = false;
+      }
+    }
   }
 }
